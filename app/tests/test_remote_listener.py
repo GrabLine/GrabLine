@@ -15,6 +15,7 @@ import os
 import socket
 import ssl
 import struct
+import sys
 import threading
 import time
 from collections.abc import Iterator
@@ -266,6 +267,57 @@ def test_address_rules() -> None:
     listed = addresses.advertised(["127.0.0.1", "fe80::1%eth0", "fd00::1", "192.168.1.6"], True)
     assert listed == ["10.0.2.2", "192.168.1.6", "[fd00::1]", "[fe80::1]"]
     assert addresses.advertised(["127.0.0.1", "192.168.1.6"]) == ["192.168.1.6"]
+
+
+def test_the_reachable_address_is_listed_first_and_virtual_adapters_last() -> None:
+    """A PC with Hyper-V, WSL and VirtualBox adapters (the owner's PC): the phone
+    tries the QR's addresses one by one, so the Wi-Fi/Ethernet one must lead."""
+    entries = [
+        ("172.29.80.1", True),  # vEthernet (Ethernet 2)
+        ("192.168.56.1", True),  # VirtualBox host-only
+        ("172.19.208.1", True),  # vEthernet (WSL)
+        ("192.168.1.6", False),  # Ethernet 2: the router's network
+        ("10.8.0.2", False),  # some other real adapter
+    ]
+    ordered = addresses.order_candidates(entries, "192.168.1.6")
+    assert ordered == ["192.168.1.6", "10.8.0.2", "172.29.80.1", "192.168.56.1", "172.19.208.1"]
+    # Without a default route, real adapters still come before virtual ones.
+    assert addresses.order_candidates(entries, None)[:2] == ["192.168.1.6", "10.8.0.2"]
+    # The routed address leads even on a virtual switch bound to the Wi-Fi.
+    assert (
+        addresses.order_candidates([("192.168.1.6", False), ("192.168.1.9", True)], "192.168.1.9")[
+            0
+        ]
+        == "192.168.1.9"
+    )
+    # The order survives selection, and the QR lists at most four.
+    selected = addresses.select_bind_addresses(ordered)
+    assert addresses.advertised(selected) == [
+        "192.168.1.6",
+        "10.8.0.2",
+        "172.29.80.1",
+        "192.168.56.1",
+    ]
+
+
+def test_virtual_adapters_are_recognised() -> None:
+    assert addresses.is_virtual_interface(
+        "ethernet_32774", "vEthernet (Default Switch)", "00:15:5D:01:02:03"
+    )
+    assert addresses.is_virtual_interface(
+        "ethernet_32781", "Ethernet 3", "0A:00:27:00:00:05"
+    )  # VirtualBox
+    assert addresses.is_virtual_interface("iftype53_32769", "Tailscale", "")
+    assert not addresses.is_virtual_interface("ethernet_32776", "Ethernet 2", "D8:BB:C1:12:34:56")
+    assert not addresses.is_virtual_interface("wireless_32768", "Wi-Fi", "A4:C3:F0:12:34:56")
+
+
+def test_the_routed_adapter_is_found_without_opening_a_socket() -> None:
+    index = addresses.routed_interface_index()
+    assert index is None or index > 0
+    if sys.platform == "win32" and index is not None:
+        ordered = addresses.bind_addresses()
+        assert ordered and addresses.is_allowed_peer(ordered[0])
 
 
 # ------------------------------------------------------ handshake and hello
