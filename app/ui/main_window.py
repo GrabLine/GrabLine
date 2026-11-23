@@ -5,6 +5,7 @@ routes it in a background thread, and Smart Engine hits get the quality panel.
 from __future__ import annotations
 
 import logging
+import sqlite3
 import threading
 import time
 from collections import deque
@@ -368,7 +369,7 @@ class MainWindow(QMainWindow):
             ("downloads", "download", t("Downloads"), lambda: self._switch_view("downloads")),
             ("dashboard", "dashboard", t("Dashboard"), lambda: self._switch_view("dashboard")),
             ("queue", "queue", t("Queue manager"), lambda: self._switch_view("queue")),
-            ("devices", "phone", t("Devices"), lambda: self._switch_view("devices")),
+            ("devices", "devices", t("Devices"), lambda: self._switch_view("devices")),
             ("settings", "settings", t("Settings"), lambda: self._switch_view("settings")),
         )
         for key, icon_name, tip, handler in nav:
@@ -3867,13 +3868,21 @@ class MainWindow(QMainWindow):
         return sum(1 for v in self._last_views.values() if v.status is JobStatus.DOWNLOADING)
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        if self.close_to_tray and self.settings.close_to_tray and self.isVisible():
+        try:
+            to_tray = self.close_to_tray and self.settings.close_to_tray and self.isVisible()
+            confirm = self.settings.confirm_exit_active
+        except sqlite3.ProgrammingError:
+            # Quitting already closed the database (Windows sends a close to
+            # the window after that): nothing left to ask, just close.
+            event.accept()
+            return
+        if to_tray:
             event.ignore()
             self.hide()
             self._hint_still_running()
             return
-        active = self._active_download_count()
-        if active and self.settings.confirm_exit_active:
+        active = self._active_download_count() if confirm else 0
+        if active:
             noun = t("download is") if active == 1 else t("downloads are")
             answer = QMessageBox.question(
                 self,

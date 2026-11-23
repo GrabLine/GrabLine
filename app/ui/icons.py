@@ -29,6 +29,13 @@ _PATHS: dict[str, str] = {
     "queue": "M2 4h12|M2 8h8|M2 12h10",
     # A phone: rounded body with a home-bar line near the bottom.
     "phone": "M5 1.5h6a1 1 0 011 1v11a1 1 0 01-1 1H5a1 1 0 01-1-1v-11a1 1 0 011-1z|M7 12h2",
+    # A monitor with a phone beside it - "Devices": phones and other PCs.
+    "devices": (
+        "M2 2.5h7.5a1 1 0 011 1v5a1 1 0 01-1 1H2a1 1 0 01-1-1v-5a1 1 0 011-1z"
+        "|M5.75 9.5v3|M3.75 12.5h4"
+        "|M12.5 5.5h1.5a1 1 0 011 1v6.5a1 1 0 01-1 1h-1.5a1 1 0 01-1-1V6.5a1 1 0 011-1z"
+        "|M13 12.25h.5"
+    ),
     # A circular arrow - "try again".
     "retry": "M13 8a5 5 0 11-1.5-3.5|M13 2.5V5h-2.5",
     "minimize": "M4 8h8",

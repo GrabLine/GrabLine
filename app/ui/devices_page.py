@@ -28,6 +28,7 @@ from typing import Any
 from PySide6.QtCore import QDateTime, QEvent, QLocale, QObject, QPoint, Qt, QTimer, Signal
 from PySide6.QtWidgets import (
     QAbstractItemView,
+    QApplication,
     QFrame,
     QGraphicsOpacityEffect,
     QHBoxLayout,
@@ -61,6 +62,9 @@ LIST_GRACE_S = 4.0
 RESULT_SHOWN_MS = 8000
 #: How long "Sent to your phone" stays under the send box.
 NOTE_SHOWN_MS = 4000
+#: How long the Allow button stays disabled after the prompt appears, so a
+#: key pressed for something else cannot approve a device.
+ALLOW_DELAY_MS = 1000
 #: Phone list updates redraw the page at most this often (seconds).
 RENDER_MIN_INTERVAL_S = 0.25
 #: Below this table width the size and time-left columns are hidden.
@@ -1396,6 +1400,12 @@ class DevicesPage(QWidget):
             box.setText(t('Allow "{name}" to control GrabLine?', name=device_name))
         allow = box.addButton(t("Allow"), QMessageBox.ButtonRole.AcceptRole)
         deny = box.addButton(t("Deny"), QMessageBox.ButtonRole.RejectRole)
+        # The prompt comes to the front with keyboard focus, so a key typed for
+        # something else must not approve: Allow can be pressed only after
+        # ALLOW_DELAY_MS, and until then Deny is the default. After that Allow
+        # is the highlighted choice (a blue Deny was being pressed by mistake).
+        # Escape and closing the box always deny.
+        allow.setEnabled(False)
         box.setDefaultButton(deny)
         box.setEscapeButton(deny)
         allow.setAccessibleName(t("Allow"))
@@ -1404,7 +1414,29 @@ class DevicesPage(QWidget):
         box.finished.connect(lambda _result, b=box: self._on_allow_answer(b))
         self.allow_box = box
         self._allow_button = allow
+        self._bring_to_front()
         box.open()
+        QTimer.singleShot(ALLOW_DELAY_MS, lambda b=box: self._arm_allow(b))
+
+    def _arm_allow(self, box: QMessageBox) -> None:
+        """Let Allow be pressed, and make it the highlighted default."""
+        allow = self._allow_button
+        if self.allow_box is not box or allow is None:
+            return  # answered or dismissed already
+        allow.setEnabled(True)
+        box.setDefaultButton(allow)
+
+    def _bring_to_front(self) -> None:
+        """The person is looking at their phone: show GrabLine (even from the
+        tray) so the Allow prompt is not hidden behind other windows."""
+        window = self.window()
+        if window.isMinimized():
+            window.setWindowState(window.windowState() & ~Qt.WindowState.WindowMinimized)
+        if not window.isVisible():
+            window.show()
+        window.raise_()
+        window.activateWindow()
+        QApplication.alert(window)
 
     def _on_allow_answer(self, box: QMessageBox) -> None:
         if self.allow_box is not box:

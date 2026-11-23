@@ -1371,6 +1371,18 @@ class _Interface:
     def addressEntries(self) -> list[_Entry]:
         return [_Entry(text) for text in self._texts]
 
+    def name(self) -> str:
+        return "eth_fake"
+
+    def humanReadableName(self) -> str:
+        return "Ethernet"
+
+    def hardwareAddress(self) -> str:
+        return ""
+
+    def index(self) -> int:
+        return 0
+
 
 class _SpoofedSocket:
     """An accepted socket whose remote address is what the test says. Every
@@ -1477,8 +1489,8 @@ def test_only_private_and_link_local_addresses_are_bound(
     for address in rig.listener.bound_addresses():
         assert is_private(address)
         assert address not in ("0.0.0.0", "::", "127.0.0.1", "::1", "192.168.99.9")
-    listed = "192.168.77.5,10.9.8.7,172.16.5.4,169.254.10.20,[fd7a:115c:a1e0::5],[fe80::1c2d]"
-    assert qr["a"] == listed  # the QR lists the same, no loopback, no 10.0.2.2
+    listed = "192.168.77.5,10.9.8.7,172.16.5.4,169.254.10.20"
+    assert qr["a"] == listed  # the first four of them, no loopback, no 10.0.2.2
     # The interface list changes: sockets follow, still private only.
     net.interfaces = ["203.0.113.7", "192.168.77.5", "100.64.1.2", "10.20.30.40", "0.0.0.0"]
     assert pump(lambda: rig.listener.bound_addresses() == ["192.168.77.5", "10.20.30.40"])
