@@ -19,6 +19,7 @@ from PySide6.QtWidgets import QLabel, QMessageBox, QPushButton
 
 from app.tests.phone_fakes import FakeService, device
 from app.tests.qt_app import ensure_app
+from app.tests.remote_client import pump
 from app.ui import phone_page
 from app.ui.devices_page import DevicesPage
 from app.ui.phone_page import PairingDialog, PhonePage
@@ -254,11 +255,30 @@ def test_locked_warning_banner(service: FakeService) -> None:
     assert not dialog.banner.isHidden()
 
 
-def _allow_prompt(page: DevicesPage) -> tuple[QMessageBox, QPushButton, QPushButton]:
+def _allow_prompt(
+    page: DevicesPage, *, armed: bool = True
+) -> tuple[QMessageBox, QPushButton, QPushButton]:
     box = page.allow_box
     assert box is not None
     buttons = {b.text(): cast(QPushButton, b) for b in box.buttons()}
+    if armed:
+        page._arm_allow(box)  # what the timer does after ALLOW_DELAY_MS
     return box, buttons["Allow"], buttons["Deny"]
+
+
+def test_allow_cannot_be_pressed_at_once_then_becomes_the_default(service: FakeService) -> None:
+    """A key typed for something else as the prompt pops up must not approve."""
+    page = DevicesPage(service)
+    page.pair_button.click()
+    service.pairingPending.emit("Pixel 8", "phone")
+    box, allow, deny = _allow_prompt(page, armed=False)
+    assert not allow.isEnabled()
+    assert box.defaultButton() is deny and box.escapeButton() is deny
+    assert pump(lambda: allow.isEnabled(), timeout=3.0)
+    assert box.defaultButton() is allow  # the highlighted choice
+    assert box.escapeButton() is deny
+    box.reject()
+    assert service.names()[-1] == "deny_pairing"
 
 
 def test_pending_opens_allow_prompt_and_allow_approves(service: FakeService) -> None:

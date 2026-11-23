@@ -789,6 +789,13 @@ class RemoteListener(QObject):
                 if server.serverError() == QAbstractSocket.SocketError.AddressInUseError:
                     in_use = True
                 server.deleteLater()
+        # Keep the sockets in the order a phone should try them (the routed
+        # adapter first), so the QR and authOk list the reachable one first
+        # even when its adapter came up after the others.
+        self._servers = {
+            **{a: self._servers[a] for a in wanted if a in self._servers},
+            **{a: server for a, server in self._servers.items() if a not in wanted},
+        }
         if not self._servers:
             self._bound_port = 0
         self._report("portInUse" if in_use else ("" if self._servers else "noAddress"))
