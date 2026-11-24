@@ -4,63 +4,83 @@
 
 # GrabLine
 
-**Downloads, media, torrents and cloud files in one desktop app.**
+**Fast, free downloads on your PC and your Android phone.**
 
-Free and open source for Windows, macOS and Linux. No ads, account or usage telemetry.
+A download manager for Windows, macOS and Linux, with an Android app and a browser
+extension. Open source, with no ads, no account and no usage telemetry.
 
 [![Download][download-badge]][releases]
 [![CI][ci-badge]][ci]
-[![License: AGPL-3.0-or-later][license-badge]][license]
+[![License: AGPL-3.0][license-badge]][license]
 [![Firefox add-on][amo-badge]][amo]
 
-**[Download][releases] · [Website][website] · [Documentation](docs/README.md) · [Report a bug][issues]**
+**[Download][releases] · [Website][website] · [Android app][android] · [Documentation](docs/README.md) · [Report a bug][issues]**
 
-<img src="docs/screenshots/queue.png" width="920" alt="GrabLine downloads window showing download progress, speed and queue controls" />
+<img src="docs/screenshots/downloads.png" width="920" alt="GrabLine downloads window with several downloads in progress" />
 
 </div>
 
-Paste a URL, drop a link onto the window, or send it from **GrabLine Connect**.
-Use one queue for ordinary files, video and audio, magnets, torrent files and
-authenticated cloud transfers. Media quality and conversion choices appear in
-the desktop app before the download starts.
+Paste a link, drop it onto the window, send it from the browser with
+**GrabLine Connect**, or share it from your phone. Ordinary files, video and audio,
+torrents and server folders all go into the same list, with the quality and the
+destination chosen before the download starts.
 
 ## Download
 
-Get the installers and extension packages from the **[latest release][releases]**.
-Packaged desktop builds do not require Python.
+Get the installers and extension packages from the **[latest release][releases]**,
+or let the [website][website] pick the right file for you. Packaged builds do not
+need Python.
 
 | Platform | Recommended package | Alternative |
 | --- | --- | --- |
-| Windows x64 | `Grabline-Setup-<version>.exe` | `Grabline-<version>-windows-portable.zip` |
+| Windows 10 or 11, x64 | `Grabline-Setup-<version>.exe` | `Grabline-<version>-windows-portable.zip` |
 | macOS, Apple Silicon | `Grabline-<version>-applesilicon.dmg` | Build from source for other configurations |
 | Linux x86-64 | `grabline_<version>_amd64.deb` | AppImage or tarball |
+| Android 8 or later | [GrabLine for Android][android] | Universal APK on its release page |
 
-Builds are currently unsigned. See the [installation guide](docs/install.md) for
-package verification, first launch, browser pairing and data locations. FFmpeg
-and Deno are downloaded separately when needed; RAR/7Z extraction needs 7-Zip.
+Desktop builds are not code signed yet. See the [installation guide](docs/install.md)
+for checksums, first launch, browser pairing and data locations. FFmpeg and Deno are
+downloaded separately when a video first needs them; RAR and 7z extraction needs 7-Zip.
 
 ## Features
 
 | Area | What you can do |
 | --- | --- |
-| File downloads | Use up to 32 HTTP connections per file, resume partial transfers, retry and use mirrors. |
-| Video and audio | Choose formats through yt-dlp; download playlists, subtitles and chapters; trim or convert media with FFmpeg. Site availability and available qualities depend on the source. |
-| Browser integration | Send links, hover over media, collect images or links, inspect detected streams and optionally hand browser downloads to GrabLine. Native Messaging connects the extension to the app. |
-| Torrents | Add magnets, `.torrent` files, batches, RSS feeds and watch folders; configure seeding and connection limits. |
-| Cloud protocols | Use FTP/FTPS, SFTP/SCP URLs, WebDAV and S3-compatible services; save account secrets in the OS keyring. Public Drive/Dropbox share links have dedicated handling. |
-| Queues and schedules | Set named queues, priorities, dependencies, concurrency, time windows and bandwidth limits. |
-| File management | Use categories, search, tags/notes, naming rules, archive extraction and history import/export. |
-| Desktop controls | Configure tray behaviour, shortcuts, themes, notifications, completion commands and queue-finished actions. |
-| Security tools | Inspect checksums and optional scanner/reputation results. TLS verification and archive path checks protect the download pipeline. |
+| File downloads | Split a file across up to 32 HTTP connections, resume after a crash or restart, retry and fall back to mirrors. |
+| Video and audio | Choose the format through yt-dlp; download playlists, subtitles and chapters; skip sponsor segments; trim or convert with FFmpeg. What is available depends on the site. |
+| Phones and PCs | Pair GrabLine for Android with a QR code, or link another PC. Send links between devices and see, pause or retry each one's downloads from the others, over your own network. |
+| Browser integration | Hover buttons on media, a popup that lists what the page offers, image and link collection, a stream inspector and optional download takeover, through Native Messaging. |
+| Torrents | Magnets, `.torrent` files, batches, RSS feeds and watch folders, with file selection and seeding limits. |
+| Servers and cloud | FTP/FTPS, SFTP/SCP, WebDAV and S3-compatible storage, with secrets in the OS keyring. Public Google Drive and Dropbox links work too. |
+| Queues and schedules | Named queues with their own limits, time windows, dependencies and categories; global, per-download and per-site speed limits. |
+| File management | Categories, search, tags and notes, naming rules, duplicate finder, archive extraction and history import and export. |
+| Desktop | Tray, notifications, shortcuts, light and dark themes with an accent colour, completion commands, queue-finished actions and 14 languages. |
+| Safety | Checksums, optional antivirus and VirusTotal checks, TLS verification and archive path checks. |
 
 ### A closer look
 
 <table>
   <tr>
-    <td width="60%" valign="top"><img src="docs/screenshots/dashboard.png" width="100%" alt="Dashboard with transfer statistics and resource graphs" /><br /><sub>Transfer dashboard</sub></td>
-    <td width="40%" valign="top"><img src="docs/screenshots/quality.png" width="100%" alt="Media dialog with video and audio quality choices" /><br /><sub>Media quality picker</sub></td>
+    <td width="58%" valign="top"><img src="docs/screenshots/devices.png" width="100%" alt="Devices page showing a paired phone and its downloads" /><br /><sub>A paired phone and its downloads, on the PC</sub></td>
+    <td width="42%" valign="top"><img src="docs/screenshots/quality.png" width="100%" alt="Choosing a video quality, subtitles and a clip range" /><br /><sub>Choosing a quality before the download starts</sub></td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/screenshots/queues.png" width="100%" alt="Queue manager with Movies, Games and Music queues" /><br /><sub>Queues with limits, night hours and dependencies</sub></td>
+    <td valign="top"><img src="docs/screenshots/extension-popup.png" width="100%" alt="GrabLine Connect popup listing media found on a page" /><br /><sub>GrabLine Connect in the browser</sub></td>
+  </tr>
+  <tr>
+    <td valign="top"><img src="docs/screenshots/dashboard.png" width="100%" alt="Dashboard with live speed, totals and graphs" /><br /><sub>Live dashboard</sub></td>
+    <td valign="top"><img src="docs/screenshots/phone-share.png" width="60%" alt="Sharing a link on the phone and choosing to download it on the PC" /><br /><sub>Sending a link from the phone to the PC</sub></td>
   </tr>
 </table>
+
+## Phones and other PCs
+
+Open **Devices** in the sidebar and click **Pair a phone or PC**. Scan the QR code with
+[GrabLine for Android][android], or type the address and code it shows. GrabLine asks
+before it allows the device. **Link to another PC** connects two copies of GrabLine the
+same way. Pairing is encrypted, works only on private network addresses and never
+opens a port on your router. The [Devices guide](docs/devices.md) has the details.
 
 ## Browser companion
 
@@ -84,7 +104,8 @@ exports stay in the browser; Firefox and Chromium use different takeover paths.
 | Start here | Details |
 | --- | --- |
 | [Install and update](docs/install.md) | Packages, checksums, pairing, backups and uninstall |
-| [Using GrabLine](docs/usage.md) | Downloads, media, queues and all 19 settings sections |
+| [Using GrabLine](docs/usage.md) | Downloads, media, queues and every settings section |
+| [Phones and PCs](docs/devices.md) | Pairing a phone, linking PCs, sending links and fixing connections |
 | [Troubleshooting](docs/troubleshooting.md) | Pairing, failed transfers, tools, logs and bug reports |
 | [Contributing](CONTRIBUTING.md) | Development setup, checks and pull requests |
 | [Windows development](docs/windows-development.md) | PowerShell setup and isolated Windows testing |
@@ -144,6 +165,7 @@ own; FFmpeg and Deno are provisioned separately rather than bundled in installer
 
 [releases]: https://github.com/GrabLine/GrabLine/releases/latest
 [website]: https://grabline.github.io/
+[android]: https://github.com/GrabLine/grabline-android
 [issues]: https://github.com/GrabLine/GrabLine/issues
 [amo]: https://addons.mozilla.org/en-US/firefox/addon/grabline-connect/
 [support]: https://ko-fi.com/zain021xd
@@ -151,5 +173,5 @@ own; FFmpeg and Deno are provisioned separately rather than bundled in installer
 [ci]: https://github.com/GrabLine/GrabLine/actions/workflows/ci.yml
 [download-badge]: https://img.shields.io/github/v/release/GrabLine/GrabLine?label=download&color=2563EB
 [ci-badge]: https://img.shields.io/github/actions/workflow/status/GrabLine/GrabLine/ci.yml?branch=main&label=CI
-[license-badge]: https://img.shields.io/badge/license-AGPL--3.0--or--later-blue
+[license-badge]: https://img.shields.io/badge/license-AGPL--3.0--or--later-2563EB
 [amo-badge]: https://img.shields.io/amo/v/grabline-connect?label=Firefox&color=ff7139

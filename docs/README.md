@@ -1,6 +1,6 @@
 # GrabLine documentation
 
-These guides describe the 1.32.15 application and current repository workflow.
+These guides describe GrabLine 1.33.1 and the current repository workflow.
 Use the [latest release](https://github.com/GrabLine/GrabLine/releases/latest)
 for packaged downloads; the `dev` branch may contain changes beyond that build.
 
@@ -10,6 +10,7 @@ for packaged downloads; the `dev` branch may contain changes beyond that build.
 | --- | --- |
 | [Installation](install.md) | Windows, macOS and Linux packages; checksums; updates; backups; uninstall |
 | [User guide](usage.md) | Adding files, media, torrents and cloud URLs; queues; settings reference |
+| [Phones and PCs](devices.md) | Pairing GrabLine for Android, linking PCs, sending links and fixing connections |
 | [Troubleshooting](troubleshooting.md) | Connection status, transfer failures, missing tools and diagnostics |
 | [GrabLine Connect](../extension/README.md) | Browser pairing, takeover, hover buttons, media discovery and development |
 | [Release notes](releases/README.md) | Current changes and historical source notes |
