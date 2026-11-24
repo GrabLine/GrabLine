@@ -5,6 +5,12 @@ and hands URLs to the desktop app over Native Messaging. Media processing and
 managed downloads run in GrabLine. Start with the
 [installation guide](../docs/install.md#browser-extension) for normal use.
 
+<img src="../docs/screenshots/extension-popup.png" width="340" alt="The GrabLine Connect popup listing videos, audio and subtitles found on a page, with recent downloads" />
+
+The popup shows whether GrabLine is connected, the media found in the current tab
+with a download button for each, your recent downloads and the hover-button and
+takeover switches.
+
 ## Install and pair
 
 **Firefox:** use the signed

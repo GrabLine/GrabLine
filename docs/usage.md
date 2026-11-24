@@ -67,6 +67,12 @@ Queue-finished actions can quit the app or request an OS power/session action.
 Choose **nothing** for ordinary use unless you intentionally want that action.
 Quiet hours suppress notifications and sounds while transfers continue.
 
+## Phones and other PCs
+
+Open **Devices** in the sidebar to pair GrabLine for Android or link another PC, send
+links to them and control their downloads. The [Phones and PCs guide](devices.md)
+walks through pairing and connection problems.
+
 ## Settings reference
 
 Use **Save** to persist edits; Cancel discards unsaved field changes. Action
@@ -77,6 +83,7 @@ the next launch. Import and Reset refresh the visible controls.
 | Section | What to configure or inspect |
 | --- | --- |
 | General | Language, startup/update checks, tray/close behaviour, exit confirmation and new-download confirmation/start policy |
+| Phones and PCs | The switch that lets paired phones and PCs connect, the listening port and whether linked PCs may control this PC; pairing itself lives in Devices |
 | Downloads | Destination, categories, save prompts, simultaneous jobs and disk-space warning |
 | Download Engine | Connections per file, speed limits, sharing, host limits and retry/transfer policy |
 | Browser Integration | Browser setup/pairing, clipboard monitoring and browser-related preferences |
